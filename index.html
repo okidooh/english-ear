@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ear Test">
+<title>English Ear — Étincelle 0</title>
+<style>
+:root { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color-scheme:light dark; }
+body { margin:0; min-height:100vh; display:grid; place-items:center; background:#f4f4f6; color:#111; }
+main { width:min(92vw,520px); background:white; border-radius:24px; padding:24px; box-shadow:0 12px 40px #0002; }
+h1 { margin:0 0 6px; font-size:28px; } p { line-height:1.4; }
+.phrase { padding:16px; border-radius:14px; background:#f1f1f3; font-size:19px; margin:16px 0; }
+.row { display:flex; gap:10px; flex-wrap:wrap; }
+button { flex:1; min-width:130px; padding:15px; border:0; border-radius:14px; font-size:17px; font-weight:700; background:#111; color:#fff; }
+button.secondary { background:#e7e7eb; color:#111; }
+label { display:block; margin:18px 0 8px; font-weight:600; }
+input[type=range] { width:100%; }
+#result,#status { padding:12px; border-radius:12px; background:#f1f1f3; min-height:24px; }
+small { opacity:.7; }
+@media(prefers-color-scheme:dark){body{background:#111}.phrase,#result,#status{background:#29292d}main{background:#1c1c1e;color:#fff}button.secondary{background:#3a3a3c;color:#fff}}
+</style>
+</head>
+<body>
+<main>
+<h1>English Ear ⚡</h1>
+<p>Étincelle 0 — test iPhone : synthèse vocale + micro + transcription.</p>
+
+<div class="phrase" id="phrase">I was supposed to call him yesterday, but I completely forgot.</div>
+
+<label>Vitesse : <span id="speedLabel">1.0×</span></label>
+<input id="speed" type="range" min="0.7" max="1.5" step="0.1" value="1">
+
+<div class="row" style="margin-top:18px">
+<button id="listen">🔊 LISTEN</button>
+<button id="speak">🎤 SPEAK</button>
+</div>
+
+<label>Transcription</label>
+<div id="result">—</div>
+<label>État</label>
+<div id="status">Prêt.</div>
+<p><small>Sur iPhone : autorise le micro. Pour tester comme une app, Safari → Partager → Ajouter à l’écran d’accueil.</small></p>
+</main>
+
+<script>
+const phrase = document.querySelector("#phrase").textContent;
+const statusEl = document.querySelector("#status");
+const resultEl = document.querySelector("#result");
+const speed = document.querySelector("#speed");
+const speedLabel = document.querySelector("#speedLabel");
+
+speed.oninput = () => speedLabel.textContent = Number(speed.value).toFixed(1) + "×";
+
+document.querySelector("#listen").onclick = () => {
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(phrase);
+  u.lang = "en-US";
+  u.rate = Number(speed.value);
+  u.onstart = () => statusEl.textContent = "Lecture…";
+  u.onend = () => statusEl.textContent = "Lecture terminée.";
+  u.onerror = e => statusEl.textContent = "Erreur TTS : " + e.error;
+  speechSynthesis.speak(u);
+};
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const speakBtn = document.querySelector("#speak");
+
+if (!SR) {
+  speakBtn.disabled = true;
+  statusEl.textContent = "SpeechRecognition indisponible dans ce navigateur.";
+} else {
+  const recognition = new SR();
+  recognition.lang = "en-US";
+  recognition.interimResults = true;
+  recognition.continuous = false;
+
+  speakBtn.onclick = () => {
+    speechSynthesis.cancel();
+    resultEl.textContent = "…";
+    statusEl.textContent = "Démarrage du micro…";
+    try { recognition.start(); }
+    catch(e) { statusEl.textContent = "Impossible de démarrer : " + e.message; }
+  };
+  recognition.onstart = () => statusEl.textContent = "Je t’écoute…";
+  recognition.onresult = e => {
+    let txt = "";
+    for (let i=e.resultIndex; i<e.results.length; i++) txt += e.results[i][0].transcript;
+    resultEl.textContent = txt || "…";
+  };
+  recognition.onend = () => statusEl.textContent = "Transcription terminée.";
+  recognition.onerror = e => statusEl.textContent = "Erreur reconnaissance : " + e.error;
+}
+</script>
+</body>
+</html>
