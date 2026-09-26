@@ -1,97 +1,20 @@
 <!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Ear Test">
-<title>English Ear — Étincelle 0</title>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="English Ear"><title>English Ear — Étincelle 1</title>
 <style>
-:root { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color-scheme:light dark; }
-body { margin:0; min-height:100vh; display:grid; place-items:center; background:#f4f4f6; color:#111; }
-main { width:min(92vw,520px); background:white; border-radius:24px; padding:24px; box-shadow:0 12px 40px #0002; }
-h1 { margin:0 0 6px; font-size:28px; } p { line-height:1.4; }
-.phrase { padding:16px; border-radius:14px; background:#f1f1f3; font-size:19px; margin:16px 0; }
-.row { display:flex; gap:10px; flex-wrap:wrap; }
-button { flex:1; min-width:130px; padding:15px; border:0; border-radius:14px; font-size:17px; font-weight:700; background:#111; color:#fff; }
-button.secondary { background:#e7e7eb; color:#111; }
-label { display:block; margin:18px 0 8px; font-weight:600; }
-input[type=range] { width:100%; }
-#result,#status { padding:12px; border-radius:12px; background:#f1f1f3; min-height:24px; }
-small { opacity:.7; }
-@media(prefers-color-scheme:dark){body{background:#111}.phrase,#result,#status{background:#29292d}main{background:#1c1c1e;color:#fff}button.secondary{background:#3a3a3c;color:#fff}}
-</style>
-</head>
-<body>
-<main>
-<h1>English Ear ⚡</h1>
-<p>Étincelle 0 — test iPhone : synthèse vocale + micro + transcription.</p>
-
-<div class="phrase" id="phrase">I was supposed to call him yesterday, but I completely forgot.</div>
-
-<label>Vitesse : <span id="speedLabel">1.0×</span></label>
-<input id="speed" type="range" min="0.7" max="1.5" step="0.1" value="1">
-
-<div class="row" style="margin-top:18px">
-<button id="listen">🔊 LISTEN</button>
-<button id="speak">🎤 SPEAK</button>
-</div>
-
-<label>Transcription</label>
-<div id="result">—</div>
-<label>État</label>
-<div id="status">Prêt.</div>
-<p><small>Sur iPhone : autorise le micro. Pour tester comme une app, Safari → Partager → Ajouter à l’écran d’accueil.</small></p>
-</main>
-
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light dark}*{box-sizing:border-box}body{margin:0;background:#f4f4f6;color:#111}main{width:min(94vw,620px);margin:auto;padding:24px 0 60px}.card{background:#fff;border-radius:24px;padding:22px;box-shadow:0 10px 35px #0002}h1{margin:0}.sub,.muted{opacity:.65}.tabs,.row{display:flex;gap:10px;flex-wrap:wrap}.tabs{margin:18px 0}button{border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:700;background:#111;color:#fff}button.secondary{background:#e7e7eb;color:#111}.tabs button,.grow{flex:1}.active{outline:3px solid #7775}.box{padding:16px;border-radius:14px;background:#f1f1f3;margin:12px 0;font-size:18px;line-height:1.45}.hiddenPhrase{text-align:center;font-weight:800;letter-spacing:.15em}input[type=text]{width:100%;padding:15px;border:1px solid #bbb;border-radius:13px;font-size:17px;background:transparent;color:inherit}input[type=range]{width:100%}label{display:block;font-weight:650;margin-top:15px}#diff span{display:inline-block;margin:2px;padding:3px 5px;border-radius:6px}.ok{background:#d9f6df}.miss{background:#ffdada}.extra{background:#fff0c7}hr{border:0;border-top:1px solid #ddd;margin:20px 0}@media(prefers-color-scheme:dark){body{background:#111}.card{background:#1c1c1e}.box{background:#29292d}.secondary{background:#3a3a3c!important;color:#fff!important}.ok{background:#174b25}.miss{background:#642424}.extra{background:#604b16}}
+</style></head><body><main><div class="card"><h1>English Ear ⚡</h1><p class="sub">Étincelle 1 — écouter, parler, comparer.</p>
+<div class="tabs"><button id="tl" class="active">👂 LISTEN</button><button id="ts" class="secondary">🗣️ SPEAK</button></div>
+<label>Vitesse : <span id="sl">1.0×</span></label><input id="speed" type="range" min=".7" max="1.5" step=".1" value="1">
+<section id="lm"><div class="box hiddenPhrase">PHRASE CACHÉE</div><div class="row"><button id="play">🔊 Écouter</button><button id="replay" class="secondary">↻ Réécouter</button></div><label>Écris ce que tu as entendu</label><input id="typed" type="text" autocomplete="off" autocapitalize="off" placeholder="Type what you heard…"><div class="row" style="margin-top:12px"><button id="check">✓ Vérifier</button><button id="reveal" class="secondary">👁 Solution</button></div></section>
+<section id="sm" hidden><label>Lis cette phrase à voix haute</label><div class="box" id="sp"></div><div class="row"><button id="record">🎤 Parler</button><button id="retry" class="secondary">↻ Réessayer</button></div><label>Transcription</label><div class="box" id="tr">—</div></section>
+<div id="fb" hidden><hr><label>Comparaison</label><div class="box" id="diff"></div><div class="box" id="score"></div></div><hr><button id="next" class="grow">Phrase suivante →</button><p class="muted" id="count"></p><p class="muted" id="status">Prêt.</p></div></main>
 <script>
-const phrase = document.querySelector("#phrase").textContent;
-const statusEl = document.querySelector("#status");
-const resultEl = document.querySelector("#result");
-const speed = document.querySelector("#speed");
-const speedLabel = document.querySelector("#speedLabel");
-
-speed.oninput = () => speedLabel.textContent = Number(speed.value).toFixed(1) + "×";
-
-document.querySelector("#listen").onclick = () => {
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(phrase);
-  u.lang = "en-US";
-  u.rate = Number(speed.value);
-  u.onstart = () => statusEl.textContent = "Lecture…";
-  u.onend = () => statusEl.textContent = "Lecture terminée.";
-  u.onerror = e => statusEl.textContent = "Erreur TTS : " + e.error;
-  speechSynthesis.speak(u);
-};
-
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-const speakBtn = document.querySelector("#speak");
-
-if (!SR) {
-  speakBtn.disabled = true;
-  statusEl.textContent = "SpeechRecognition indisponible dans ce navigateur.";
-} else {
-  const recognition = new SR();
-  recognition.lang = "en-US";
-  recognition.interimResults = true;
-  recognition.continuous = false;
-
-  speakBtn.onclick = () => {
-    speechSynthesis.cancel();
-    resultEl.textContent = "…";
-    statusEl.textContent = "Démarrage du micro…";
-    try { recognition.start(); }
-    catch(e) { statusEl.textContent = "Impossible de démarrer : " + e.message; }
-  };
-  recognition.onstart = () => statusEl.textContent = "Je t’écoute…";
-  recognition.onresult = e => {
-    let txt = "";
-    for (let i=e.resultIndex; i<e.results.length; i++) txt += e.results[i][0].transcript;
-    resultEl.textContent = txt || "…";
-  };
-  recognition.onend = () => statusEl.textContent = "Transcription terminée.";
-  recognition.onerror = e => statusEl.textContent = "Erreur reconnaissance : " + e.error;
-}
-</script>
-</body>
-</html>
+const P=["I was supposed to call him yesterday, but I completely forgot.","I usually wake up around seven, but I don't get out of bed right away.","I grabbed a coffee to go and skipped breakfast.","By the time I got to the office, I was starving.","I'll just call him later, you know.","He texted me at midnight, kinda annoyed.","I didn't catch what she said the first time.","Could you say that again a little more slowly?","I thought the train left at half past eight.","We ended up staying home because it was raining.","I'm gonna head out in a couple of minutes.","Do you wanna grab something to eat?","I've gotta finish this before I leave.","I should've checked the weather before coming out.","There's no way I'm doing that again.","I don't really feel like going out tonight.","She told me she'd call as soon as she landed.","I wasn't paying attention, so I missed the announcement.","Hang on a second, I'll be right back.","I can't believe we waited that long for nothing."];let i=0,last="";const $=s=>document.querySelector(s),cur=()=>P[i],norm=s=>s.toLowerCase().replace(/[’]/g,"'").replace(/[^a-z0-9'\s]/g,"").replace(/\s+/g," ").trim(),words=s=>norm(s).split(" ").filter(Boolean);
+function lev(A,B){let m=A.length,n=B.length,d=Array.from({length:m+1},()=>Array(n+1).fill(0));for(let x=0;x<=m;x++)d[x][0]=x;for(let y=0;y<=n;y++)d[0][y]=y;for(let x=1;x<=m;x++)for(let y=1;y<=n;y++)d[x][y]=Math.min(d[x-1][y]+1,d[x][y-1]+1,d[x-1][y-1]+(A[x-1]===B[y-1]?0:1));return d}
+function compare(actual){let A=words(cur()),B=words(actual),d=lev(A,B),x=A.length,y=B.length,out=[];while(x||y){if(x&&y&&A[x-1]===B[y-1]){out.push('<span class="ok">'+A[x-1]+'</span>');x--;y--}else if(x&&y&&d[x][y]===d[x-1][y-1]+1){out.push('<span class="miss">'+A[x-1]+' ≠ '+B[y-1]+'</span>');x--;y--}else if(y&&d[x][y]===d[x][y-1]+1){out.push('<span class="extra">+ '+B[y-1]+'</span>');y--}else{out.push('<span class="miss">− '+A[x-1]+'</span>');x--}}$("#fb").hidden=false;$("#diff").innerHTML=out.reverse().join(" ");let dist=d[A.length][B.length],sc=Math.max(0,Math.round((1-dist/Math.max(1,A.length,B.length))*100));$("#score").textContent="Correspondance : "+sc+"%"}
+function speak(){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(cur());u.lang="en-US";u.rate=+$("#speed").value;u.onstart=()=>$("#status").textContent="Lecture…";u.onend=()=>$("#status").textContent="Lecture terminée.";u.onerror=e=>$("#status").textContent="Erreur TTS : "+e.error;speechSynthesis.speak(u)}
+function render(){$("#count").textContent="Phrase "+(i+1)+" / "+P.length;$("#sp").textContent=cur();$("#typed").value="";$("#tr").textContent="—";$("#fb").hidden=true;$("#status").textContent="Prêt."}
+$("#speed").oninput=e=>$("#sl").textContent=(+e.target.value).toFixed(1)+"×";$("#play").onclick=$("#replay").onclick=speak;$("#check").onclick=()=>compare($("#typed").value);$("#reveal").onclick=()=>{compare($("#typed").value);$("#diff").innerHTML+='<hr><strong>Phrase :</strong> '+cur()};$("#next").onclick=()=>{i=(i+1)%P.length;render()};
+function mode(m){$("#lm").hidden=m!=="l";$("#sm").hidden=m!=="s";$("#fb").hidden=true;$("#tl").className=m==="l"?"active":"secondary";$("#ts").className=m==="s"?"active":"secondary"}$("#tl").onclick=()=>mode("l");$("#ts").onclick=()=>mode("s");
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$("#record").disabled=true;$("#status").textContent="Reconnaissance vocale indisponible."}else{let r=new SR();r.lang="en-US";r.interimResults=true;r.continuous=false;function start(){speechSynthesis.cancel();last="";$("#tr").textContent="…";$("#fb").hidden=true;try{r.start()}catch(e){$("#status").textContent="Impossible de démarrer : "+e.message}}$("#record").onclick=$("#retry").onclick=start;r.onstart=()=>$("#status").textContent="Je t'écoute…";r.onresult=e=>{let t="";for(let k=0;k<e.results.length;k++)t+=e.results[k][0].transcript;last=t;$("#tr").textContent=t||"…"};r.onend=()=>{$("#status").textContent="Transcription terminée.";if(last)compare(last)};r.onerror=e=>$("#status").textContent="Erreur : "+e.error}render();
+</script></body></html>
