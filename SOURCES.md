@@ -38,3 +38,19 @@ Le niveau 4 utilise un extrait de **l’AMI Meeting Corpus**, réunion **ES2002a
 - Les phrases et timestamps utilisés par l’exercice proviennent des annotations manuelles AMI au niveau des mots pour ES2002a.
 
 Important : ce niveau est nommé **CONVERSATION** plutôt que **SLANG**. L’AMI Meeting Corpus fournit bien de la parole spontanée, mais ce n’est pas un corpus d’argot américain/AAVE. Un futur niveau réellement slang pourra être ajouté séparément sans prétendre que cette source en est une.
+
+
+## Étincelle 10 — réservoir de contenu
+
+English Ear ne dépend plus d'une petite liste fixe pour les niveaux LibriSpeech.
+
+- Niveau 1 — TRAINING : 100 exercices TTS construits localement à partir de phrases de base et de combinaisons conversationnelles contrôlées.
+- Niveaux 2–3 : l'application lit `CHAPTERS.TXT` du dépôt LibriSpeech `dev-clean`, choisit de façon stable un pack de 24 chapitres pour l'appareil, charge leurs transcriptions puis construit les exercices à partir des vrais identifiants audio.
+- HUMAN conserve les énoncés courts (2–8 mots).
+- HARD conserve les énoncés intermédiaires (9–14 mots), afin d'éviter les phrases interminables.
+- Les identifiants LibriSpeech sont utilisés comme clés stables pour la mémoire adaptative ; l'ordre du corpus peut donc évoluer sans rattacher l'historique à la mauvaise phrase.
+- Si la découverte distante des chapitres échoue, l'application retombe sur un petit pack local de secours.
+
+Le pack de 24 chapitres est sélectionné de manière stable par appareil dans le catalogue `dev-clean`. Le corpus source contient des milliers d'énoncés ; English Ear n'a donc plus besoin de coder chaque phrase à la main.
+
+Le niveau 4 CONVERSATION utilise encore le fichier AMI de trois minutes documenté ci-dessus. Il contient actuellement 24 segments conversationnels vérifiés ; il devra être élargi avec d'autres enregistrements conversationnels avant d'atteindre la même profondeur que les niveaux 2–3.
