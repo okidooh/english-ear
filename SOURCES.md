@@ -14,3 +14,13 @@ Les 20 extraits de démonstration REAL SPEECH utilisent **LibriSpeech**, corpus 
 Référence : V. Panayotov, G. Chen, D. Povey, S. Khudanpur, “LibriSpeech: An ASR Corpus Based on Public Domain Audio Books”, ICASSP 2015.
 
 Cette Étincelle valide uniquement la chaîne technique « vraie voix humaine → dictée → comparaison ». LibriSpeech est de la parole lue et n'est pas considéré comme le corpus final de conversation spontanée d'English Ear.
+
+
+## Progression pédagogique
+
+- Niveau 1 — TRAINING : synthèse vocale en-US, vitesse réglable.
+- Niveau 2 — HUMAN : sélection de phrases LibriSpeech `dev-clean/1272/135031` courtes et simples, avec vraie voix humaine. Cette sélection vise une marche intermédiaire accessible ; le corpus reste de la parole lue.
+- Niveau 3 — HARD : sélection LibriSpeech plus longue et lexicalement difficile, dont le chapitre 128104.
+- Niveau 4 — SLANG : réservé à un futur corpus de parole spontanée/argot ; aucun audio n'est encore intégré.
+
+LibriSpeech est un corpus d'anglais lu, et non de conversation spontanée. Il est utilisé aux niveaux 2 et 3 parce que sa licence CC BY 4.0 permet cette preuve pédagogique et technique. La source officielle OpenSLR SLR12 reste la référence de licence.
