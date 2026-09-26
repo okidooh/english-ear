@@ -2,7 +2,7 @@
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="English Ear"><title>English Ear — Étincelle 2</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light dark}*{box-sizing:border-box}body{margin:0;background:#f4f4f6;color:#111}main{width:min(94vw,620px);margin:auto;padding:24px 0 60px}.card{background:#fff;border-radius:24px;padding:22px;box-shadow:0 10px 35px #0002}h1{margin:0}.sub,.muted{opacity:.65}.tabs,.row{display:flex;gap:10px;flex-wrap:wrap}.tabs{margin:18px 0}button{border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:700;background:#111;color:#fff}button.secondary{background:#e7e7eb;color:#111}.tabs button,.grow{flex:1}.active{outline:3px solid #7775}.box{padding:16px;border-radius:14px;background:#f1f1f3;margin:12px 0;font-size:18px;line-height:1.45}.hiddenPhrase{text-align:center;font-weight:800;letter-spacing:.12em}input[type=text]{width:100%;padding:15px;border:1px solid #bbb;border-radius:13px;font-size:17px;background:transparent;color:inherit}input[type=range]{width:100%}label{display:block;font-weight:650;margin-top:15px}#diff span{display:inline-block;margin:2px;padding:3px 5px;border-radius:6px}.ok{background:#d9f6df}.miss{background:#ffdada}.extra{background:#fff0c7}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#e7e7eb;font-size:12px;font-weight:800}hr{border:0;border-top:1px solid #ddd;margin:20px 0}@media(prefers-color-scheme:dark){body{background:#111}.card{background:#1c1c1e}.box{background:#29292d}.secondary,.badge{background:#3a3a3c!important;color:#fff!important}.ok{background:#174b25}.miss{background:#642424}.extra{background:#604b16}}
-</style></head><body><main><div class="card"><h1>English Ear ⚡</h1><p class="sub">Étincelle 10 — vrai réservoir de contenu.</p>
+</style></head><body><main><div class="card"><h1>English Ear ⚡</h1><p class="sub">Étincelle 10.1 — réservoir de centaines d’exercices.</p>
 <div class="tabs"><button class="active">🎧🎤 REPEAT</button></div>
 <section id="lm"><label>Niveau d’écoute</label><div class="row levels"><button id="l1" class="secondary">1 · TRAINING 🤖</button><button id="l2" class="active">2 · HUMAN 🙂</button><button id="l3" class="secondary">3 · HARD 🔥</button><button id="l4" class="secondary">4 · CONVERSATION ☠️</button></div><p><span class="badge" id="sourceBadge">NIVEAU 2 · HUMAIN TRANQUILLE</span></p>
 <div id="speedWrap" hidden><label>Vitesse TTS : <span id="sl">1.0×</span></label><input id="speed" type="range" min=".7" max="1.5" step=".1" value="1"></div>
@@ -95,13 +95,39 @@ const CONVERSATION=[
 ["ami",166.67,167.36,"I will go."]
 ];
 let EASY_BANK=[...EASY],HARD_BANK=[...HARD],CONV_BANK=[...CONVERSATION];
-const LIBRI_CHAPTERS=[
+const LIBRI_FALLBACK_CHAPTERS=[
 ["1272","128104"],["1272","135031"],
 ["1462","170138"],["1462","170142"],["1462","170145"],
 ["1673","143396"],["1673","143397"],
 ["174","168635"],["174","50561"],["174","84280"]
 ];
 const LIBRI_ROOT="https://huggingface.co/patrickvonplaten/LibriSpeechTest/resolve/main/dev-clean";
+const LIBRI_CHAPTERS_META="https://huggingface.co/patrickvonplaten/LibriSpeechTest/resolve/main/CHAPTERS.TXT";
+const LIBRI_PACK_SIZE=24;
+function contentSeed(){
+  let s=localStorage.getItem("englishEarContentSeed");
+  if(!s){s=String(Math.floor(Math.random()*2147483647));localStorage.setItem("englishEarContentSeed",s)}
+  return +s||1;
+}
+function hash32(s){
+  let h=2166136261>>>0;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}
+  return h>>>0;
+}
+async function discoverLibriChapters(){
+  const r=await fetch(LIBRI_CHAPTERS_META,{cache:"force-cache"});
+  if(!r.ok)throw new Error("CHAPTERS "+r.status);
+  const txt=await r.text(), all=[];
+  for(const line of txt.split(/\r?\n/)){
+    if(!line.trim()||line.trim().startsWith(";"))continue;
+    const p=line.split("|").map(x=>x.trim());
+    if(p.length>=4&&p[3]==="dev-clean")all.push([p[1],p[0]]);
+  }
+  if(!all.length)throw new Error("Aucun chapitre dev-clean");
+  const seed=contentSeed();
+  all.sort((a,b)=>hash32(seed+":"+a[0]+":"+a[1])-hash32(seed+":"+b[0]+":"+b[1]));
+  return {selected:all.slice(0,Math.min(LIBRI_PACK_SIZE,all.length)),available:all.length};
+}
 function set(){return level===2?EASY_BANK:level===3?HARD_BANK:level===4?CONV_BANK:null}
 const total=()=>level===1?TTS.length:set().length;
 const itemAt=j=>level===1?["tts:"+TTS[j],TTS[j]]:level===4?CONV_BANK[j]:set()[j];
@@ -140,8 +166,13 @@ function prettyTranscript(s){
   return s.charAt(0).toUpperCase()+s.slice(1);
 }
 async function loadLibriReservoir(){
+  let selected=LIBRI_FALLBACK_CHAPTERS,available=LIBRI_FALLBACK_CHAPTERS.length,discovered=false;
+  try{
+    const d=await discoverLibriChapters();
+    selected=d.selected;available=d.available;discovered=true;
+  }catch(e){}
   const loaded=[];
-  const jobs=LIBRI_CHAPTERS.map(async([sp,ch])=>{
+  const jobs=selected.map(async([sp,ch])=>{
     const url=LIBRI_ROOT+"/"+sp+"/"+ch+"/"+sp+"-"+ch+".trans.txt";
     const r=await fetch(url,{cache:"force-cache"});
     if(!r.ok)throw new Error(r.status+" "+url);
@@ -157,14 +188,14 @@ async function loadLibriReservoir(){
   const hard=new Map(HARD.map(x=>[x[0],x]));
   for(const x of loaded){
     const wc=x[1].trim().split(/\s+/).length;
-    if(wc>=2&&wc<=9)easy.set(x[0],x);
-    if(wc>=10&&wc<=16)hard.set(x[0],x);
+    if(wc>=2&&wc<=8)easy.set(x[0],x);
+    if(wc>=9&&wc<=14)hard.set(x[0],x);
   }
   EASY_BANK=[...easy.values()];
   HARD_BANK=[...hard.values()];
   if(level===2||level===3){shuffle();render()}
   const ok=res.filter(x=>x.status==="fulfilled").length;
-  $("#status").textContent="Réservoir chargé : "+EASY_BANK.length+" HUMAN · "+HARD_BANK.length+" HARD · "+CONV_BANK.length+" CONVERSATION ("+ok+"/"+LIBRI_CHAPTERS.length+" chapitres).";
+  $("#status").textContent="Réservoir chargé : "+EASY_BANK.length+" HUMAN · "+HARD_BANK.length+" HARD · "+CONV_BANK.length+" CONVERSATION · "+ok+" chapitres chargés"+(discovered?" sur "+available+" disponibles":" (pack de secours)")+".";
 }
 const norm=s=>s.toLowerCase().replace(/[’]/g,"'").replace(/[^a-z0-9'\s]/g,"").replace(/\s+/g," ").trim(),words=s=>norm(s).split(" ").filter(Boolean);
 function lev(A,B){let m=A.length,n=B.length,d=Array.from({length:m+1},()=>Array(n+1).fill(0));for(let x=0;x<=m;x++)d[x][0]=x;for(let y=0;y<=n;y++)d[0][y]=y;for(let x=1;x<=m;x++)for(let y=1;y<=n;y++)d[x][y]=Math.min(d[x-1][y]+1,d[x][y-1]+1,d[x-1][y-1]+(A[x-1]===B[y-1]?0:1));return d}
