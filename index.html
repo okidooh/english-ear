@@ -2,7 +2,7 @@
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="English Ear"><title>English Ear — Étincelle 2</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light dark}*{box-sizing:border-box}body{margin:0;background:#f4f4f6;color:#111}main{width:min(94vw,620px);margin:auto;padding:24px 0 60px}.card{background:#fff;border-radius:24px;padding:22px;box-shadow:0 10px 35px #0002}h1{margin:0}.sub,.muted{opacity:.65}.tabs,.row{display:flex;gap:10px;flex-wrap:wrap}.tabs{margin:18px 0}button{border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:700;background:#111;color:#fff}button.secondary{background:#e7e7eb;color:#111}.tabs button,.grow{flex:1}.active{outline:3px solid #7775}.box{padding:16px;border-radius:14px;background:#f1f1f3;margin:12px 0;font-size:18px;line-height:1.45}.hiddenPhrase{text-align:center;font-weight:800;letter-spacing:.12em}input[type=text]{width:100%;padding:15px;border:1px solid #bbb;border-radius:13px;font-size:17px;background:transparent;color:inherit}input[type=range]{width:100%}label{display:block;font-weight:650;margin-top:15px}#diff span{display:inline-block;margin:2px;padding:3px 5px;border-radius:6px}.ok{background:#d9f6df}.miss{background:#ffdada}.extra{background:#fff0c7}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#e7e7eb;font-size:12px;font-weight:800}hr{border:0;border-top:1px solid #ddd;margin:20px 0}@media(prefers-color-scheme:dark){body{background:#111}.card{background:#1c1c1e}.box{background:#29292d}.secondary,.badge{background:#3a3a3c!important;color:#fff!important}.ok{background:#174b25}.miss{background:#642424}.extra{background:#604b16}}
-</style></head><body><main><div class="card"><h1>English Ear ⚡</h1><p class="sub">Étincelle 10.1 — réservoir de centaines d’exercices.</p>
+</style></head><body><main><div class="card"><h1>English Ear ⚡</h1><p class="sub">Étincelle 11 — lecture audio compatible iPhone.</p>
 <div class="tabs"><button class="active">🎧🎤 REPEAT</button></div>
 <section id="lm"><label>Niveau d’écoute</label><div class="row levels"><button id="l1" class="secondary">1 · TRAINING 🤖</button><button id="l2" class="active">2 · HUMAN 🙂</button><button id="l3" class="secondary">3 · HARD 🔥</button><button id="l4" class="secondary">4 · CONVERSATION ☠️</button></div><p><span class="badge" id="sourceBadge">NIVEAU 2 · HUMAIN TRANQUILLE</span></p>
 <div id="speedWrap" hidden><label>Vitesse TTS : <span id="sl">1.0×</span></label><input id="speed" type="range" min=".7" max="1.5" step=".1" value="1"></div>
@@ -14,7 +14,7 @@
 <div class="row"><button id="validate">✓ Valider ma réponse</button><button id="writeFallback" class="secondary">⌨️ Écrire</button></div>
 <div id="writeBox" hidden><label>Si le micro ne transcrit pas, écris ce que tu as entendu</label><input id="typed" type="text" autocomplete="off" autocapitalize="off" placeholder="Type what you heard…"></div>
 </section>
-<div id="fb" hidden><hr><label>Comparaison</label><div class="box" id="diff"></div><div class="box" id="score"></div></div><hr><button id="next" class="grow">Phrase suivante →</button><p class="muted" id="count"></p><p class="muted">REPEAT fusionne écoute et parole : la phrase reste cachée jusqu’à validation. Sous 70 %, elle peut revenir après quelques exercices. ⌨️ Écrire reste disponible si la reconnaissance vocale ne fonctionne pas.</p><p class="muted" id="status">Prêt.</p><p class="muted">Niveau 1 : grand banc TTS. Niveaux 2–3 : réservoir LibriSpeech chargé depuis plusieurs chapitres. Niveau 4 : conversation AMI. Voir SOURCES.md.</p></div></main>
+<div id="fb" hidden><hr><label>Comparaison</label><div class="box" id="diff"></div><div class="box" id="score"></div></div><hr><button id="next" class="grow">Phrase suivante →</button><p class="muted" id="count"></p><p class="muted">REPEAT fusionne écoute et parole : la phrase reste cachée jusqu’à validation. Sous 70 %, elle peut revenir après quelques exercices. ⌨️ Écrire reste disponible si la reconnaissance vocale ne fonctionne pas.</p><p class="muted" id="status">Prêt.</p><p class="muted">Niveau 1 : TTS. Niveaux 2–3 : LibriSpeech. Niveau 4 : AMI. Sur iPhone, si un format audio réel est refusé par Safari, l'exercice bascule automatiquement sur la voix système au lieu de rester muet. Voir SOURCES.md.</p></div></main>
 <script>
 const TTS_SEED=["I was supposed to call him yesterday, but I completely forgot.","I usually wake up around seven, but I don't get out of bed right away.","I grabbed a coffee to go and skipped breakfast.","By the time I got to the office, I was starving.","I'll just call him later, you know.","He texted me at midnight, kinda annoyed.","I didn't catch what she said the first time.","Could you say that again a little more slowly?","I thought the train left at half past eight.","We ended up staying home because it was raining.","I'm gonna head out in a couple of minutes.","Do you wanna grab something to eat?","I've gotta finish this before I leave.","I should've checked the weather before coming out.","There's no way I'm doing that again.","I don't really feel like going out tonight.","She told me she'd call as soon as she landed.","I wasn't paying attention, so I missed the announcement.","Hang on a second, I'll be right back.","I can't believe we waited that long for nothing."];
 const TRAINING_PAIRS=[
@@ -206,7 +206,7 @@ function prepareLevel4(){
     realAudio.pause();
     realAudio=new Audio(LEVEL4_AUDIO);
     realAudio.preload="auto";
-    realAudio.onerror=()=>$("#status").textContent="Le fichier du niveau 4 n'a pas pu être chargé.";
+    realAudio.onerror=()=>speakFallback("media");
     realAudio.load();
   }
 }
@@ -218,6 +218,36 @@ function stopAt(end){
       $("#status").textContent="Lecture terminée.";
     }
   };
+}
+function speakFallback(reason=""){
+  realAudio.pause();
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(cur());
+  u.lang="en-US";
+  u.rate=level===4?1.05:1;
+  u.onstart=()=>$("#status").textContent="Voix iPhone de secours"+(reason?" · audio réel incompatible":"")+"…";
+  u.onend=()=>$("#status").textContent="Lecture terminée.";
+  u.onerror=()=>$("#status").textContent="Impossible de lire cet exercice sur cet appareil.";
+  speechSynthesis.speak(u);
+}
+function playReal(url,label="Vraie voix humaine…"){
+  realAudio.pause();
+  realAudio=new Audio();
+  realAudio.preload="auto";
+  realAudio.playsInline=true;
+  let fellBack=false;
+  const fallbackOnce=()=>{
+    if(fellBack)return;
+    fellBack=true;
+    speakFallback("media");
+  };
+  realAudio.onplay=()=>$("#status").textContent=label;
+  realAudio.onended=()=>$("#status").textContent="Lecture terminée.";
+  realAudio.onerror=fallbackOnce;
+  realAudio.src=url;
+  realAudio.load();
+  const p=realAudio.play();
+  if(p&&p.catch)p.catch(fallbackOnce);
 }
 function play(){
   speechSynthesis.cancel();
@@ -238,7 +268,7 @@ function play(){
       try{realAudio.currentTime=start}catch(e){}
       stopAt(end);
       realAudio.muted=false;
-      realAudio.play().then(()=>$("#status").textContent="Conversation spontanée…").catch(e=>$("#status").textContent="Lecture bloquée : "+e.message);
+      realAudio.play().then(()=>$("#status").textContent="Conversation spontanée…").catch(()=>speakFallback("media"));
     };
     if(realAudio.readyState>=1){begin();return}
     // iPhone/Safari : démarrer le média pendant le geste utilisateur,
@@ -250,15 +280,11 @@ function play(){
       const unmute=()=>{realAudio.muted=false;$("#status").textContent="Conversation spontanée…"};
       if(realAudio.seeking)realAudio.addEventListener("seeked",unmute,{once:true});else unmute();
     },{once:true});
-    realAudio.play().catch(e=>$("#status").textContent="Lecture bloquée : "+e.message);
+    realAudio.play().catch(()=>speakFallback("media"));
     $("#status").textContent="Chargement de la conversation…";
     return;
   }
-  realAudio=new Audio(audioUrl());
-  realAudio.onplay=()=>$("#status").textContent="Vraie voix humaine…";
-  realAudio.onended=()=>$("#status").textContent="Lecture terminée.";
-  realAudio.onerror=()=>$("#status").textContent="Audio réel indisponible — vérifie la connexion.";
-  realAudio.play().catch(e=>$("#status").textContent="Lecture bloquée : "+e.message);
+  playReal(audioUrl());
 }
 function render(){scoreSaved=false;let n=total(),s=stats(),v=s[key()];$("#count").textContent="NIVEAU "+level+" · Exercice "+(pos+1)+" / "+n+" · réservoir "+n+" · ordre adaptatif"+(v?" · déjà vu "+v.seen+"× · meilleur "+v.best+"%":" · nouveau");$("#hiddenPhrase").textContent="PHRASE CACHÉE";$("#tr").textContent="—";$("#typed").value="";$("#writeBox").hidden=true;$("#fb").hidden=true;$("#status").textContent="1. Écoute · 2. Répète · 3. Valide."}
 function source(n){realAudio.pause();level=n;shuffle();for(let k=1;k<=4;k++)$("#l"+k).className=k===n?"active":"secondary";$("#speedWrap").hidden=n!==1;$("#sourceBadge").textContent=n===1?"NIVEAU 1 · TTS RÉGLABLE":n===2?"NIVEAU 2 · HUMAIN TRANQUILLE":n===3?"NIVEAU 3 · HARD 🔥":"NIVEAU 4 · CONVERSATION ☠️";if(n===4)prepareLevel4();render()}
