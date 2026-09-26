@@ -2,7 +2,7 @@
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="English Ear"><title>English Ear — Étincelle 2</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light dark}*{box-sizing:border-box}body{margin:0;background:#f4f4f6;color:#111}main{width:min(94vw,620px);margin:auto;padding:24px 0 60px}.card{background:#fff;border-radius:24px;padding:22px;box-shadow:0 10px 35px #0002}h1{margin:0}.sub,.muted{opacity:.65}.tabs,.row{display:flex;gap:10px;flex-wrap:wrap}.tabs{margin:18px 0}button{border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:700;background:#111;color:#fff}button.secondary{background:#e7e7eb;color:#111}.tabs button,.grow{flex:1}.active{outline:3px solid #7775}.box{padding:16px;border-radius:14px;background:#f1f1f3;margin:12px 0;font-size:18px;line-height:1.45}.hiddenPhrase{text-align:center;font-weight:800;letter-spacing:.12em}input[type=text]{width:100%;padding:15px;border:1px solid #bbb;border-radius:13px;font-size:17px;background:transparent;color:inherit}input[type=range]{width:100%}label{display:block;font-weight:650;margin-top:15px}#diff span{display:inline-block;margin:2px;padding:3px 5px;border-radius:6px}.ok{background:#d9f6df}.miss{background:#ffdada}.extra{background:#fff0c7}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#e7e7eb;font-size:12px;font-weight:800}hr{border:0;border-top:1px solid #ddd;margin:20px 0}@media(prefers-color-scheme:dark){body{background:#111}.card{background:#1c1c1e}.box{background:#29292d}.secondary,.badge{background:#3a3a3c!important;color:#fff!important}.ok{background:#174b25}.miss{background:#642424}.extra{background:#604b16}}
-</style></head><body><main><div class="card"><h1>English Ear ⚡</h1><p class="sub">Étincelle 9 — niveau 4 conversation réelle, audio fiable.</p>
+</style></head><body><main><div class="card"><h1>English Ear ⚡</h1><p class="sub">Étincelle 10 — vrai réservoir de contenu.</p>
 <div class="tabs"><button class="active">🎧🎤 REPEAT</button></div>
 <section id="lm"><label>Niveau d’écoute</label><div class="row levels"><button id="l1" class="secondary">1 · TRAINING 🤖</button><button id="l2" class="active">2 · HUMAN 🙂</button><button id="l3" class="secondary">3 · HARD 🔥</button><button id="l4" class="secondary">4 · CONVERSATION ☠️</button></div><p><span class="badge" id="sourceBadge">NIVEAU 2 · HUMAIN TRANQUILLE</span></p>
 <div id="speedWrap" hidden><label>Vitesse TTS : <span id="sl">1.0×</span></label><input id="speed" type="range" min=".7" max="1.5" step=".1" value="1"></div>
@@ -14,9 +14,23 @@
 <div class="row"><button id="validate">✓ Valider ma réponse</button><button id="writeFallback" class="secondary">⌨️ Écrire</button></div>
 <div id="writeBox" hidden><label>Si le micro ne transcrit pas, écris ce que tu as entendu</label><input id="typed" type="text" autocomplete="off" autocapitalize="off" placeholder="Type what you heard…"></div>
 </section>
-<div id="fb" hidden><hr><label>Comparaison</label><div class="box" id="diff"></div><div class="box" id="score"></div></div><hr><button id="next" class="grow">Phrase suivante →</button><p class="muted" id="count"></p><p class="muted">REPEAT fusionne écoute et parole : la phrase reste cachée jusqu’à validation. Sous 70 %, elle peut revenir après quelques exercices. ⌨️ Écrire reste disponible si la reconnaissance vocale ne fonctionne pas.</p><p class="muted" id="status">Prêt.</p><p class="muted">Niveaux 2–3 : LibriSpeech. Niveau 4 : extrait conversationnel AMI Meeting Corpus (CC BY 4.0), servi depuis un fichier GitHub public vérifié. Voir SOURCES.md.</p></div></main>
+<div id="fb" hidden><hr><label>Comparaison</label><div class="box" id="diff"></div><div class="box" id="score"></div></div><hr><button id="next" class="grow">Phrase suivante →</button><p class="muted" id="count"></p><p class="muted">REPEAT fusionne écoute et parole : la phrase reste cachée jusqu’à validation. Sous 70 %, elle peut revenir après quelques exercices. ⌨️ Écrire reste disponible si la reconnaissance vocale ne fonctionne pas.</p><p class="muted" id="status">Prêt.</p><p class="muted">Niveau 1 : grand banc TTS. Niveaux 2–3 : réservoir LibriSpeech chargé depuis plusieurs chapitres. Niveau 4 : conversation AMI. Voir SOURCES.md.</p></div></main>
 <script>
-const TTS=["I was supposed to call him yesterday, but I completely forgot.","I usually wake up around seven, but I don't get out of bed right away.","I grabbed a coffee to go and skipped breakfast.","By the time I got to the office, I was starving.","I'll just call him later, you know.","He texted me at midnight, kinda annoyed.","I didn't catch what she said the first time.","Could you say that again a little more slowly?","I thought the train left at half past eight.","We ended up staying home because it was raining.","I'm gonna head out in a couple of minutes.","Do you wanna grab something to eat?","I've gotta finish this before I leave.","I should've checked the weather before coming out.","There's no way I'm doing that again.","I don't really feel like going out tonight.","She told me she'd call as soon as she landed.","I wasn't paying attention, so I missed the announcement.","Hang on a second, I'll be right back.","I can't believe we waited that long for nothing."];
+const TTS_SEED=["I was supposed to call him yesterday, but I completely forgot.","I usually wake up around seven, but I don't get out of bed right away.","I grabbed a coffee to go and skipped breakfast.","By the time I got to the office, I was starving.","I'll just call him later, you know.","He texted me at midnight, kinda annoyed.","I didn't catch what she said the first time.","Could you say that again a little more slowly?","I thought the train left at half past eight.","We ended up staying home because it was raining.","I'm gonna head out in a couple of minutes.","Do you wanna grab something to eat?","I've gotta finish this before I leave.","I should've checked the weather before coming out.","There's no way I'm doing that again.","I don't really feel like going out tonight.","She told me she'd call as soon as she landed.","I wasn't paying attention, so I missed the announcement.","Hang on a second, I'll be right back.","I can't believe we waited that long for nothing."];
+const TRAINING_PAIRS=[
+["call my brother","after work"],["send that email","before lunch"],["buy some groceries","on the way home"],["charge my phone","before I leave"],["book the tickets","tonight"],["check the train times","before tomorrow morning"],["pick up the package","after work"],["finish this report","before five"],["reply to her message","when I get home"],["clean the kitchen","before dinner"],["take the dog out","in a few minutes"],["fill up the car","on the way there"],["make an appointment","tomorrow morning"],["print the documents","before the meeting"],["grab a coffee","before class"],["pack my bag","before I go to bed"],["pay the bill","this afternoon"],["call the hotel","later today"],["check the address","before we leave"],["bring my passport","to the airport"]
+];
+function makeTraining(){
+  const out=[...TTS_SEED];
+  for(const [a,t] of TRAINING_PAIRS){
+    out.push(`I need to ${a} ${t}.`);
+    out.push(`I was going to ${a} ${t}, but I forgot.`);
+    out.push(`Did you remember to ${a} ${t}?`);
+    out.push(`I'll ${a} ${t} if I have time.`);
+  }
+  return [...new Set(out)];
+}
+const TTS=makeTraining();
 const HARD=[
 ["1272-128104-0000","Mister Quilter is the apostle of the middle classes and we are glad to welcome his gospel."],
 ["1272-128104-0001","Nor is Mister Quilter's manner less interesting than his matter."],
@@ -54,24 +68,50 @@ const EASY=[
 ["1272-128104-0008","As for etchings, they are of two kinds: British and foreign."]
 ];
 let i=0,last="",level=2,order=[],pos=0,scoreSaved=false;const $=s=>document.querySelector(s);
-const SLANG=[
-["ami",74.42,77.29,"Do you want to introduce yourself again?"],
+const CONVERSATION=[
 ["ami",77.44,80.87,"Hi, I'm David and I'm supposed to be an industrial designer."],
-["ami",85.99,88.71,"Um, I'm Craig and I'm User Interface."],
-["ami",98.57,101.76,"So that's David, Andrew and Craig, isn't it?"],
-["ami",104.89,106.58,"And you all arrived on time."],
-["ami",111.72,116.66,"Um, as you can see it's supposed to be original, trendy and user friendly."],
-["ami",116.66,120.98,"Um, so that's kind of our our brief, as it were."],
-["ami",131.36,132.03,"What did you get?"],
 ["ami",132.57,136.68,"Um, I just got the project announcement about what the project is."],
+["ami",136.68,138.20,"Designing a remote control."],
 ["ami",138.20,140.77,"That's about it, didn't get anything else."],
 ["ami",140.77,141.98,"Did you get the same thing?"],
+["ami",55.98,60.35,"Um well this is the kick-off meeting for our our project."],
+["ami",74.42,77.29,"Do you want to introduce yourself again?"],
+["ami",98.57,101.76,"So that's David, Andrew and Craig, isn't it?"],
+["ami",104.89,106.58,"And you all arrived on time."],
+["ami",108.96,111.72,"Um yeah so des uh design a new remote control."],
+["ami",111.72,116.66,"Um, as you can see it's supposed to be original, trendy and user friendly."],
+["ami",116.66,120.98,"Um so that's kind of our our brief, as it were."],
+["ami",120.98,126.12,"Um and so there are three different stages to the design."],
+["ami",131.36,132.03,"What did you get?"],
+["ami",140.10,141.53,"Is that what everybody got?"],
 ["ami",144.43,147.92,"So we're gonna have like individual work and then a meeting about it."],
-["ami",165.91,167.31,"So who would like to go first?"]
+["ami",147.92,151.79,"And repeat that process three times."],
+["ami",151.79,158.41,"Um and at this point we get try out the whiteboard over there."],
+["ami",165.91,167.31,"So who would like to go first?"],
+["ami",167.84,168.84,"Very good."],
+["ami",85.99,88.71,"Um I'm Craig and I'm User Interface."],
+["ami",82.08,84.46,"And I'm Andrew and I'm uh our marketing"],
+["ami",139.51,140.56,"Yeah, that's that's it."],
+["ami",166.67,167.36,"I will go."]
 ];
-const set=()=>level===2?EASY:level===3?HARD:level===4?SLANG:null;
+let EASY_BANK=[...EASY],HARD_BANK=[...HARD],CONV_BANK=[...CONVERSATION];
+const LIBRI_CHAPTERS=[
+["1272","128104"],["1272","135031"],
+["1462","170138"],["1462","170142"],["1462","170145"],
+["1673","143396"],["1673","143397"],
+["174","168635"],["174","50561"],["174","84280"]
+];
+const LIBRI_ROOT="https://huggingface.co/patrickvonplaten/LibriSpeechTest/resolve/main/dev-clean";
+function set(){return level===2?EASY_BANK:level===3?HARD_BANK:level===4?CONV_BANK:null}
 const total=()=>level===1?TTS.length:set().length;
-const key=()=>level+":"+i;
+const itemAt=j=>level===1?["tts:"+TTS[j],TTS[j]]:level===4?CONV_BANK[j]:set()[j];
+const stableId=j=>{
+  if(level===1)return "tts:"+TTS[j];
+  if(level===4){const q=CONV_BANK[j];return "ami:"+q[1].toFixed(2)+"-"+q[2].toFixed(2)+":"+q[3]}
+  return "libri:"+set()[j][0];
+};
+const keyFor=j=>level+":"+stableId(j);
+const key=()=>keyFor(i);
 function stats(){try{return JSON.parse(localStorage.getItem("englishEarStats")||"{}")}catch{return {}}}
 function saveScore(sc){
   if(scoreSaved)return;
@@ -85,16 +125,47 @@ function shuffle(){
   for(let x=order.length-1;x>0;x--){let y=Math.floor(Math.random()*(x+1));[order[x],order[y]]=[order[y],order[x]]}
   // Tous les exercices passent une fois. Dans chaque bloc de 5, on place d'abord
   // les exercices nouveaux/faibles afin qu'ils arrivent plus tôt sans répétition forcée.
-  const priority=j=>{let v=s[level+":"+j];if(!v)return 0;return 1+(v.best/100)*2+(v.last/100)};
+  const priority=j=>{let v=s[keyFor(j)];if(!v)return 0;return 1+(v.best/100)*2+(v.last/100)};
   for(let start=0;start<order.length;start+=5){
     let block=order.slice(start,start+5).sort((a,b)=>priority(a)-priority(b));
     order.splice(start,block.length,...block);
   }
   pos=0;i=order[0]??0
 }
-const cur=()=>level===1?TTS[i]:level===4?SLANG[i][3]:set()[i][1];
+const cur=()=>level===1?TTS[i]:level===4?CONV_BANK[i][3]:set()[i][1];
 const LEVEL4_AUDIO="https://raw.githubusercontent.com/rh-aiservices-bu/speaker-diarization/main/ami_sample.wav";
-const audioUrl=()=>{if(level===4)return LEVEL4_AUDIO;let a=set(),id=a[i][0],p=id.split("-");return "https://huggingface.co/patrickvonplaten/LibriSpeechTest/resolve/main/dev-clean/"+p[0]+"/"+p[1]+"/"+id+".flac"};
+const audioUrl=()=>{if(level===4)return LEVEL4_AUDIO;let id=set()[i][0],p=id.split("-");return LIBRI_ROOT+"/"+p[0]+"/"+p[1]+"/"+id+".flac"};
+function prettyTranscript(s){
+  s=s.toLowerCase().replace(/\bi\b/g,"I").replace(/\bi'm\b/g,"I'm").replace(/\bi'll\b/g,"I'll").replace(/\bi've\b/g,"I've").replace(/\bi'd\b/g,"I'd");
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+async function loadLibriReservoir(){
+  const loaded=[];
+  const jobs=LIBRI_CHAPTERS.map(async([sp,ch])=>{
+    const url=LIBRI_ROOT+"/"+sp+"/"+ch+"/"+sp+"-"+ch+".trans.txt";
+    const r=await fetch(url,{cache:"force-cache"});
+    if(!r.ok)throw new Error(r.status+" "+url);
+    const txt=await r.text();
+    for(const line of txt.split(/\r?\n/)){
+      const m=line.trim().match(/^(\S+)\s+(.+)$/);
+      if(m)loaded.push([m[1],prettyTranscript(m[2])]);
+    }
+  });
+  const res=await Promise.allSettled(jobs);
+  if(!loaded.length)return;
+  const easy=new Map(EASY.map(x=>[x[0],x]));
+  const hard=new Map(HARD.map(x=>[x[0],x]));
+  for(const x of loaded){
+    const wc=x[1].trim().split(/\s+/).length;
+    if(wc>=2&&wc<=9)easy.set(x[0],x);
+    if(wc>=10&&wc<=16)hard.set(x[0],x);
+  }
+  EASY_BANK=[...easy.values()];
+  HARD_BANK=[...hard.values()];
+  if(level===2||level===3){shuffle();render()}
+  const ok=res.filter(x=>x.status==="fulfilled").length;
+  $("#status").textContent="Réservoir chargé : "+EASY_BANK.length+" HUMAN · "+HARD_BANK.length+" HARD · "+CONV_BANK.length+" CONVERSATION ("+ok+"/"+LIBRI_CHAPTERS.length+" chapitres).";
+}
 const norm=s=>s.toLowerCase().replace(/[’]/g,"'").replace(/[^a-z0-9'\s]/g,"").replace(/\s+/g," ").trim(),words=s=>norm(s).split(" ").filter(Boolean);
 function lev(A,B){let m=A.length,n=B.length,d=Array.from({length:m+1},()=>Array(n+1).fill(0));for(let x=0;x<=m;x++)d[x][0]=x;for(let y=0;y<=n;y++)d[0][y]=y;for(let x=1;x<=m;x++)for(let y=1;y<=n;y++)d[x][y]=Math.min(d[x-1][y]+1,d[x][y-1]+1,d[x-1][y-1]+(A[x-1]===B[y-1]?0:1));return d}
 function compare(actual){let A=words(cur()),B=words(actual),d=lev(A,B),x=A.length,y=B.length,out=[];while(x||y){if(x&&y&&A[x-1]===B[y-1]){out.push('<span class="ok">'+A[x-1]+'</span>');x--;y--}else if(x&&y&&d[x][y]===d[x-1][y-1]+1){out.push('<span class="miss">'+A[x-1]+' ≠ '+B[y-1]+'</span>');x--;y--}else if(y&&d[x][y]===d[x][y-1]+1){out.push('<span class="extra">+ '+B[y-1]+'</span>');y--}else{out.push('<span class="miss">− '+A[x-1]+'</span>');x--}}$("#fb").hidden=false;$("#diff").innerHTML=out.reverse().join(" ");let dist=d[A.length][B.length],sc=Math.max(0,Math.round((1-dist/Math.max(1,A.length,B.length))*100));$("#score").textContent="Correspondance : "+sc+"%";saveScore(sc)}
@@ -131,7 +202,7 @@ function play(){
   }
   if(level===4){
     prepareLevel4();
-    const q=SLANG[i],start=q[1],end=q[2];
+    const q=CONV_BANK[i],start=q[1],end=q[2];
     const begin=()=>{
       try{realAudio.currentTime=start}catch(e){}
       stopAt(end);
@@ -158,7 +229,7 @@ function play(){
   realAudio.onerror=()=>$("#status").textContent="Audio réel indisponible — vérifie la connexion.";
   realAudio.play().catch(e=>$("#status").textContent="Lecture bloquée : "+e.message);
 }
-function render(){scoreSaved=false;let n=total(),s=stats(),v=s[key()];$("#count").textContent="NIVEAU "+level+" · Exercice "+(pos+1)+" / "+n+" · ordre adaptatif"+(v?" · déjà vu "+v.seen+"× · meilleur "+v.best+"%":" · nouveau");$("#hiddenPhrase").textContent="PHRASE CACHÉE";$("#tr").textContent="—";$("#typed").value="";$("#writeBox").hidden=true;$("#fb").hidden=true;$("#status").textContent="1. Écoute · 2. Répète · 3. Valide."}
+function render(){scoreSaved=false;let n=total(),s=stats(),v=s[key()];$("#count").textContent="NIVEAU "+level+" · Exercice "+(pos+1)+" / "+n+" · réservoir "+n+" · ordre adaptatif"+(v?" · déjà vu "+v.seen+"× · meilleur "+v.best+"%":" · nouveau");$("#hiddenPhrase").textContent="PHRASE CACHÉE";$("#tr").textContent="—";$("#typed").value="";$("#writeBox").hidden=true;$("#fb").hidden=true;$("#status").textContent="1. Écoute · 2. Répète · 3. Valide."}
 function source(n){realAudio.pause();level=n;shuffle();for(let k=1;k<=4;k++)$("#l"+k).className=k===n?"active":"secondary";$("#speedWrap").hidden=n!==1;$("#sourceBadge").textContent=n===1?"NIVEAU 1 · TTS RÉGLABLE":n===2?"NIVEAU 2 · HUMAIN TRANQUILLE":n===3?"NIVEAU 3 · HARD 🔥":"NIVEAU 4 · CONVERSATION ☠️";if(n===4)prepareLevel4();render()}
 $("#l1").onclick=()=>source(1);$("#l2").onclick=()=>source(2);$("#l3").onclick=()=>source(3);$("#l4").onclick=()=>source(4);$("#speed").oninput=e=>$("#sl").textContent=(+e.target.value).toFixed(1)+"×";$("#play").onclick=$("#replay").onclick=play;
 $("#writeFallback").onclick=()=>{$("#writeBox").hidden=!$("#writeBox").hidden;if(!$("#writeBox").hidden)$("#typed").focus()};
@@ -171,4 +242,5 @@ $("#next").onclick=()=>{
 };
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$("#record").disabled=true;$("#status").textContent="Reconnaissance vocale indisponible."}else{let r=new SR();r.lang="en-US";r.interimResults=true;r.continuous=false;function start(){speechSynthesis.cancel();realAudio.pause();last="";$("#tr").textContent="…";$("#fb").hidden=true;try{r.start()}catch(e){$("#status").textContent="Impossible de démarrer : "+e.message}}$("#record").onclick=$("#retry").onclick=start;r.onstart=()=>$("#status").textContent="Je t'écoute…";r.onresult=e=>{let t="";for(let k=0;k<e.results.length;k++)t+=e.results[k][0].transcript;last=t;$("#tr").textContent=t||"…"};r.onend=()=>{$("#status").textContent=last?"Transcription prête. Valide quand tu veux.":"Aucune transcription. Réessaie ou utilise ⌨️ Écrire."};r.onerror=e=>$("#status").textContent="Erreur : "+e.error}
 source(2);
+loadLibriReservoir().catch(()=>{$("#status").textContent="Réservoir distant indisponible : utilisation du contenu local de secours."});
 </script></body></html>
